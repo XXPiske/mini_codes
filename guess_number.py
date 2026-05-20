@@ -42,6 +42,8 @@ def main():
     while True:
         left_int_bound, right_int_bound = set_range()
         the_chosen_number = random.randint(left_int_bound,right_int_bound)
+        attempt = 1
+
         while True:
             user_input = input(f'Take a guess from {left_int_bound} to {right_int_bound}: ')
             user_number = get_int_from_input(user_input)
@@ -51,14 +53,16 @@ def main():
             elif user_number < left_int_bound or user_number > right_int_bound:
                 print(f'Error: Out of range! Use number from {left_int_bound} to {right_int_bound}')
                 continue
-            
+                        
             if user_number == the_chosen_number:
-                print(f"You won! The number was: {the_chosen_number}")
+                print(f"You won! The number was: {the_chosen_number}. Attempts were needed: {attempt}")
                 break
             elif user_number > the_chosen_number:
                 print('Smaller')
+                attempt = attempt + 1
             else:
                 print('Bigger')
+                attempt = attempt + 1
         
         if restart():
             continue
