@@ -7,16 +7,40 @@ def get_int_from_input(user_input: str) -> int | None:
     except ValueError:
         return None
 
-def main():
-    the_chosen_number = random.randint(1,100)
+def set_range():
     while True:
-        user_input = input('Take a guess 1 to 100: ')
+        left_bound = input('Set left guessing bound: ')
+        left_int_bound = get_int_from_input(left_bound)
+        if left_int_bound is None:
+            print('Error: Use integer!')
+            continue
+        else:
+            break
+    while True:
+        right_bound = input('Set right guessing bound: ')
+        right_int_bound = get_int_from_input(right_bound)
+        if right_int_bound is None:
+            print('Error: Use integer!')
+            continue
+        else:
+            if right_int_bound <= left_int_bound:
+                print('Error: Right bound must be bigger than Left bound!')
+                continue
+            else:
+                break
+    return left_int_bound, right_int_bound
+
+def main():
+    left_int_bound, right_int_bound = set_range()
+    the_chosen_number = random.randint(left_int_bound,right_int_bound)
+    while True:
+        user_input = input(f'Take a guess from {left_int_bound} to {right_int_bound}: ')
         user_number = get_int_from_input(user_input)
         if user_number is None:
             print('Error: Use integer!')
             continue
-        elif user_number < 1 or user_number > 100:
-            print('Error: Out of range! Use number from 1 to 100')
+        elif user_number < left_int_bound or user_number > right_int_bound:
+            print(f'Error: Out of range! Use number from {left_int_bound} to {right_int_bound}')
             continue
         
         if user_number == the_chosen_number:
