@@ -1,12 +1,15 @@
 import random
 from datetime import datetime, timedelta
 
-def get_int_from_input(user_input: str) -> int | None:
-    try:
-        user_number = int(user_input)
-        return user_number
-    except ValueError:
-        return None
+def get_int_from_input(prompt: str) -> int:
+    while True:
+        user_input = input(prompt)
+        try:
+            user_number = int(user_input)
+            return user_number
+        except ValueError:
+            print('Error: Use integer!')
+            continue
 
 def format_time(td: timedelta) -> str:
     total_seconds = int(td.total_seconds())
@@ -19,26 +22,14 @@ def format_time(td: timedelta) -> str:
         return f"{seconds} {str_seconds}"
 
 def set_range() -> tuple[int, int]:
+    left_int_bound = get_int_from_input('Set left guessing bound: ')
     while True:
-        left_bound = input('Set left guessing bound: ')
-        left_int_bound = get_int_from_input(left_bound)
-        if left_int_bound is None:
-            print('Error: Use integer!')
+        right_int_bound = get_int_from_input('Set right guessing bound: ')
+        if right_int_bound <= left_int_bound:
+            print('Error: Right bound must be bigger than Left bound!')
             continue
         else:
             break
-    while True:
-        right_bound = input('Set right guessing bound: ')
-        right_int_bound = get_int_from_input(right_bound)
-        if right_int_bound is None:
-            print('Error: Use integer!')
-            continue
-        else:
-            if right_int_bound <= left_int_bound:
-                print('Error: Right bound must be bigger than Left bound!')
-                continue
-            else:
-                break
     return left_int_bound, right_int_bound
 
 def restart() -> bool:
@@ -46,8 +37,10 @@ def restart() -> bool:
         ask = input("Type 'y' to start again and 'n' to end the game: ")
         if ask == 'y':
             return True
-        if ask == 'n':
+        elif ask == 'n':
             return False
+        else:
+            print("No-no-no, use only 'y' or 'n'!")
 
 def main():
     while True:
@@ -56,12 +49,8 @@ def main():
         attempt = 1
         start_time = datetime.now()
         while True:
-            user_input = input(f'Take a guess from {left_int_bound} to {right_int_bound}: ')
-            user_number = get_int_from_input(user_input)
-            if user_number is None:
-                print('Error: Use integer!')
-                continue
-            elif user_number < left_int_bound or user_number > right_int_bound:
+            user_number = get_int_from_input(f'Take a guess from {left_int_bound} to {right_int_bound}: ')
+            if user_number < left_int_bound or user_number > right_int_bound:
                 print(f'Error: Out of range! Use number from {left_int_bound} to {right_int_bound}')
                 continue
                         
@@ -73,10 +62,11 @@ def main():
                 break
             elif user_number > the_chosen_number:
                 print('Smaller')
-                attempt = attempt + 1
             else:
                 print('Bigger')
-                attempt = attempt + 1
+            
+            attempt += 1
+
         if restart():
             continue
         else:
