@@ -1,4 +1,5 @@
 import random
+from datetime import datetime, timedelta
 
 def get_int_from_input(user_input: str) -> int | None:
     try:
@@ -6,6 +7,16 @@ def get_int_from_input(user_input: str) -> int | None:
         return user_number
     except ValueError:
         return None
+
+def format_time(td: timedelta) -> str:
+    total_seconds = int(td.total_seconds())
+    minutes, seconds = divmod(total_seconds, 60)
+    str_minutes = "minutes" if minutes > 1 else "minute"
+    str_seconds = "seconds" if seconds > 1 else "second"
+    if minutes:
+        return f"{minutes} {str_minutes} and {seconds} {str_seconds}"
+    else:
+        return f"{seconds} {str_seconds}"
 
 def set_range() -> tuple[int, int]:
     while True:
@@ -43,7 +54,7 @@ def main():
         left_int_bound, right_int_bound = set_range()
         the_chosen_number = random.randint(left_int_bound,right_int_bound)
         attempt = 1
-
+        start_time = datetime.now()
         while True:
             user_input = input(f'Take a guess from {left_int_bound} to {right_int_bound}: ')
             user_number = get_int_from_input(user_input)
@@ -55,7 +66,10 @@ def main():
                 continue
                         
             if user_number == the_chosen_number:
-                print(f"You won! The number was: {the_chosen_number}. Attempts were needed: {attempt}")
+                end_time = datetime.now()
+                total_time = (end_time - start_time)
+                total_time_formatted = format_time(total_time)
+                print(f"You won! The number was: {the_chosen_number}\nAttempts: {attempt}\nTime: {total_time_formatted}")
                 break
             elif user_number > the_chosen_number:
                 print('Smaller')
@@ -63,7 +77,6 @@ def main():
             else:
                 print('Bigger')
                 attempt = attempt + 1
-        
         if restart():
             continue
         else:
