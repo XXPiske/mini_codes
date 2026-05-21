@@ -9,13 +9,12 @@ def get_int_from_input(prompt: str) -> int:
             return user_number
         except ValueError:
             print('Error: Use integer!')
-            continue
 
 def format_time(td: timedelta) -> str:
     total_seconds = int(td.total_seconds())
     minutes, seconds = divmod(total_seconds, 60)
     str_minutes = "minutes" if minutes > 1 else "minute"
-    str_seconds = "seconds" if seconds > 1 else "second"
+    str_seconds = "seconds" if seconds != 1 else "second"
     if minutes:
         return f"{minutes} {str_minutes} and {seconds} {str_seconds}"
     else:
@@ -28,8 +27,8 @@ def set_range() -> tuple[int, int]:
         if right_int_bound <= left_int_bound:
             print('Error: Right bound must be bigger than Left bound!')
             continue
-        else:
-            break
+        
+        break
     return left_int_bound, right_int_bound
 
 def restart() -> bool:
