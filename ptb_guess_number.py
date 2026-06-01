@@ -19,20 +19,29 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.effective_message.reply_text("Давай сыграем в угадай число! Напиши от какого числа гадаем")
+    await update.effective_message.reply_text(
+        text="Готов сыграть в угадай число?",
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Погнали", callback_data="start")]])
+    )
     context.user_data.clear() # очищаем словарь перед стартом
-    return SET_LEFT_BOUND
+
+async def start_button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    if query.data == "start":
+        await query.edit_message_text("Напиши от какого числа гадаем")
+        return SET_LEFT_BOUND
 
 async def set_left_bound(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.effective_message.text
     try:
         left_bound = int(user_input)
-        context.user_data["left_bound"] = left_bound
-        await update.effective_message.reply_text("Отлично! Теперь напиши до какого числа гадаем")
-        return SET_RIGHT_BOUND
     except ValueError:
         await update.effective_message.reply_text("Напиши целое число")
-        return SET_LEFT_BOUND
+        return SET_LEFT_BOUND      
+    context.user_data["left_bound"] = left_bound
+    await update.effective_message.reply_text("Отлично! Теперь напиши до какого числа гадаем")
+    return SET_RIGHT_BOUND
 
 async def set_right_bound(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.effective_message.text
@@ -86,7 +95,10 @@ async def check_a_guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     app = Application.builder().token(BOT_TOKEN).build()
     main_conv = ConversationHandler(
-        entry_points=[CommandHandler("start", start)],
+        entry_points=[
+            CommandHandler("start", start),
+            CallbackQueryHandler(start_button_handler, pattern="^start$")
+        ],
         states={
             SET_LEFT_BOUND: [MessageHandler(filters.TEXT & ~filters.COMMAND, set_left_bound)],
             SET_RIGHT_BOUND: [MessageHandler(filters.TEXT & ~filters.COMMAND, set_right_bound)],
