@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 import random
 
-BOT_TOKEN = "8685899604:AAHMENpiZTPzqH5umEDF0AYrP1jOWU2qOaE"
+BOT_TOKEN = ""
 
 (
     ASK_MAIN_MENU, 
